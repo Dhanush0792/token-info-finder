@@ -1,7 +1,4 @@
 Flask
-requests
-jinja2
 gunicorn
+requests
 python-dotenv
-fastapi
-uvicorn
