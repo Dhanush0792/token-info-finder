@@ -1,5 +1,5 @@
-fastapi
-jinja2
-uvicorn
+Flask
 requests
+jinja2
 gunicorn
+python-dotenv
