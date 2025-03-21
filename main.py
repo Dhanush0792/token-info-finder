@@ -1,35 +1,20 @@
-from fastapi import FastAPI, Request, Form
-from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
+from flask import Flask, render_template, request
 import requests
+import os
 
-app = FastAPI()
-templates = Jinja2Templates(directory="templates")
+app = Flask(__name__)
 
-ETHERSCAN_API_KEY = "3Z1M8G2HXSBPXBCSA5FSZ1A6AMN43IERPB"
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    token_info = None
+    if request.method == 'POST':
+        contract_address = request.form.get('contract_address')
+        if contract_address:
+            etherscan_api_key = os.environ.get('3Z1M8G2HXSBPXBCSA5FSZ1A6AMN43IERPB')
+            etherscan_url = f"https://api.etherscan.io/api?module=token&action=tokeninfo&contractaddress={contract_address}&apikey={etherscan_api_key}"
+            response = requests.get(etherscan_url)
+            token_info = response.json()
+    return render_template('index.html', token_info=token_info)
 
-@app.get("/", response_class=HTMLResponse)
-async def read_root(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request, "result": None})
-
-@app.post("/fetch", response_class=HTMLResponse)
-async def fetch_token_info(request: Request, address: str = Form(...)):
-    etherscan_url = f"https://api.etherscan.io/api?module=token&action=tokeninfo&contractaddress={address}&apikey={ETHERSCAN_API_KEY}"
-    etherscan_res = requests.get(etherscan_url).json()
-
-    coingecko_url = f"https://api.coingecko.com/api/v3/coins/ethereum/contract/{address}"
-    coingecko_res = requests.get(coingecko_url)
-
-    result = {}
-    
-    if etherscan_res['status'] == '1':
-        result['etherscan'] = etherscan_res['result']
-    else:
-        result['etherscan'] = {"error": "Token info not found on Etherscan"}
-
-    if coingecko_res.status_code == 200:
-        result['coingecko'] = coingecko_res.json()
-    else:
-        result['coingecko'] = {"error": "Token not found on CoinGecko"}
-
-    return templates.TemplateResponse("index.html", {"request": request, "result": result})
+if __name__ == '__main__':
+    app.run(debug=True)
