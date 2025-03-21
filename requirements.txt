@@ -1,10 +1,4 @@
-<<<<<<< HEAD
-fastapi
-jinja2
-uvicorn
-requests
-=======
 Flask==3.1.0
 requests
 gunicorn
->>>>>>> f064bc4f858addb739ea9e4840d1a6ab79ee0f66
+
