@@ -16,7 +16,6 @@ def index():
             token_info = response.json()
     return render_template('index.html', token_info=token_info)
 
-# ✅ New API route
 @app.route('/fetch', methods=['POST'])
 def fetch_token_info():
     data = request.get_json()
