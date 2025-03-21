@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: token-info-finder
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn main:app"
+    plan: free
+    envVars:
+      - key: ETHERSCAN_API_KEY
+        value: 3Z1M8G2HXSBPXBCSA5FSZ1A6AMN43IERPB
